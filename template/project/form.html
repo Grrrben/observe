@@ -1,18 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Project</title>
-    <style>
-        #container {
-            margin: 0 auto;
-            width: 80%;
-        }
-    </style>
-</head>
-<body>
-
-<div id="container">
+{{template "base" .}}
+{{define "title"}}Nieuwe observatie{{end}}
+{{define "body"}}
     <h1>Project aanmaken</h1>
 
     {{ if  .Message }}
@@ -33,7 +21,4 @@
 
         <input type="submit" value="Aanmaken">
     </form>
-</div>
-
-</body>
-</html>
+{{end}}

@@ -29,7 +29,7 @@ func (rep *ObservationRepository) FindByHash(hash string) ([]entity.Observation,
 
 	var obs []entity.Observation
 
-	q := `SELECT id, project_hash as ProjectHash, image FROM observation WHERE project_hash = $1 LIMIT 1;`
+	q := `SELECT id, project_hash as ProjectHash, image, date_created as created FROM observation WHERE project_hash = $1;`
 	c := rep.getConnection()
 	defer c.Close()
 
@@ -37,7 +37,7 @@ func (rep *ObservationRepository) FindByHash(hash string) ([]entity.Observation,
 
 	for rows.Next() {
 		var o entity.Observation
-		err = rows.Scan(&o.Id, &o.ProjectHash, &o.Image)
+		err = rows.Scan(&o.Id, &o.ProjectHash, &o.Image, &o.DateCreated)
 		if err != nil {
 			return obs, err
 		}

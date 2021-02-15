@@ -16,6 +16,7 @@ import (
 
 func ServeObservationForm(w http.ResponseWriter, r *http.Request) {
 	var wg sync.WaitGroup
+
 	v := mux.Vars(r)
 	hash := v["hash"]
 
@@ -27,8 +28,8 @@ func ServeObservationForm(w http.ResponseWriter, r *http.Request) {
 	vars := PageVars{Saved: false, Message: "", Hash: hash}
 
 	tmplHelper := NewTemplateHelper()
-	files := tmplHelper.GetExtendedTemplateFiles("observation/new.html")
-	tmpl, err := template.ParseFiles(files...)
+	tf := tmplHelper.GetExtendedTemplateFiles("observation/new.html")
+	tmpl, err := template.ParseFiles(tf...)
 	if err != nil {
 		glog.Errorf("could not create template file: msg %s", err)
 		eh := ErrorHandler{Code: http.StatusInternalServerError, Message: err.Error()}
@@ -37,7 +38,6 @@ func ServeObservationForm(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.Method == http.MethodGet {
-		glog.Infof("serving form for hash %s", hash)
 		e := tmpl.Execute(w, vars)
 		if e != nil {
 			glog.Fatal(e)
@@ -46,11 +46,9 @@ func ServeObservationForm(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.Method == http.MethodPost {
-		glog.Info("Handling form POST")
-
 		o := entity.Observation{
 			ProjectHash: hash,
-			Time:        time.Now(),
+			DateCreated: time.Now(),
 		}
 
 		raw := r.FormValue("image")

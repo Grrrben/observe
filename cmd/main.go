@@ -16,17 +16,15 @@ func main() {
 	glog.Info("App started")
 
 	err := godotenv.Load(".env")
-
 	if err != nil {
 		log.Fatalf("Error loading .env file; msg %s", err)
 	}
 
 	r := mux.NewRouter()
-
-	r.HandleFunc("/observation/{hash}/new", web.ServeObservationForm).Methods(http.MethodPost, http.MethodGet)
-	r.HandleFunc("/project/new", web.ServeProjectForm).Methods(http.MethodPost, http.MethodGet)
-	r.HandleFunc("/project/{hash}/viewer", web.ServeProjectViewer).Methods(http.MethodGet)
-	r.HandleFunc("/project/{hash}/", web.ServeProject).Methods(http.MethodGet)
+	r.HandleFunc("/observation/{hash}/new", loggerMiddleWare(web.ServeObservationForm)).Methods(http.MethodPost, http.MethodGet)
+	r.HandleFunc("/project/new", loggerMiddleWare(web.ServeProjectForm)).Methods(http.MethodPost, http.MethodGet)
+	r.HandleFunc("/project/{hash}/viewer", loggerMiddleWare(web.ServeProjectViewer)).Methods(http.MethodGet)
+	r.HandleFunc("/project/{hash}/", loggerMiddleWare(web.ServeProject)).Methods(http.MethodGet)
 	r.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
 		glog.Info("Requested /")
 	})
@@ -41,4 +39,11 @@ func main() {
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", fs))
 
 	http.ListenAndServe(":8080", r)
+}
+
+func loggerMiddleWare(f http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		glog.Infof("[%s] Request url %s", r.Method, r.URL.Path)
+		f(w, r)
+	}
 }

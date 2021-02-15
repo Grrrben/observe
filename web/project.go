@@ -21,14 +21,17 @@ func ServeProject(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tmplHelper := NewTemplateHelper()
-	tFile := tmplHelper.FilePath("project/view.html")
-	tmpl := template.Must(template.ParseFiles(tFile))
-
-	glog.Infof("ServeProject, %s", hash)
+	tf := tmplHelper.GetExtendedTemplateFiles("project/view.html")
+	tmpl, err := template.ParseFiles(tf...)
+	if err != nil {
+		glog.Errorf("could not create template file: msg %s", err)
+		eh := ErrorHandler{Code: http.StatusInternalServerError, Message: err.Error()}
+		eh.ServeHTTP(w, r)
+		return
+	}
 
 	pr := repo.NewProjectRepo()
 	p, err := pr.GetByHash(hash)
-
 	if err != nil {
 		glog.Errorf("Error in database query: msg %s", err)
 		eh := ErrorHandler{Code: http.StatusInternalServerError, Message: err.Error()}

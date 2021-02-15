@@ -20,10 +20,8 @@ func ServeProjectViewer(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tmplHelper := NewTemplateHelper()
-	tmplts := tmplHelper.GetExtendedTemplateFiles("viewer/view.html")
-	tmpl, err := template.ParseFiles(tmplts...)
-
-	glog.Infof("Viewer: %s", hash)
+	tf := tmplHelper.GetExtendedTemplateFiles("viewer/view.html")
+	tmpl, err := template.ParseFiles(tf...)
 
 	pr := repo.NewProjectRepo()
 	p, err := pr.GetByHash(hash)

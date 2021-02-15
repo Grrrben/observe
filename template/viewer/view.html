@@ -1,13 +1,13 @@
 {{template "base" .}}
-
 {{define "title"}}{{.Project.Name}}{{end}}
-
 {{define "body"}}
     <h1>{{.Project.Name}}</h1>
     <p>Viewer</p>
 
-
     {{range .Observations}}
-        <p>{{.Image}}</p>
+        <div>
+            <p>{{.CreatedFormattedDate}}</p>
+            <img src="/static/images/observation/small/{{.Image}}" />
+        </div>
     {{ end }}
 {{end}}

@@ -1,32 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>{{.Project.Name}}</title>
-    <style>
-        #container {
-            margin: 0 auto;
-            width: 80%;
-        }
-    </style>
-</head>
-<body>
-
-<div id="container">
+{{template "base" .}}
+{{define "title"}}Nieuwe observatie{{end}}
+{{define "body"}}
     <h1>{{.Project.Name}}</h1>
     <p>{{.Project.Description}}</p>
     <p>{{.Project.Address}}</p>
 
     <br>
-    <img src="{{.QrCode}}" alt="QR code" />
+    <img src="{{.QrCode}}" alt="QR code"/>
     <br>
 
     <ul>
         <li><a href="/observation/{{.Project.Hash}}/new">Nieuwe Waarneming</a></li>
         <li><a href="/project/{{.Project.Hash}}/viewer">Viewer</a></li>
     </ul>
-
-</div>
-
-</body>
-</html>
+{{end}}

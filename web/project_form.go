@@ -10,21 +10,28 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"sync"
 )
 
 func ServeProjectForm(w http.ResponseWriter, r *http.Request) {
+
+	var wg sync.WaitGroup
 
 	type PageVars struct {
 		Message string
 	}
 
 	tmplHelper := NewTemplateHelper()
-	tFile := tmplHelper.FilePath("project/form.html")
-
-	tmpl := template.Must(template.ParseFiles(tFile))
+	tf := tmplHelper.GetExtendedTemplateFiles("project/form.html")
+	tmpl, err := template.ParseFiles(tf...)
+	if err != nil {
+		glog.Errorf("could not create template file: msg %s", err)
+		eh := ErrorHandler{Code: http.StatusInternalServerError, Message: err.Error()}
+		eh.ServeHTTP(w, r)
+		return
+	}
 
 	if r.Method == http.MethodGet {
-		glog.Info("ServeProjectForm, new project")
 		e := tmpl.Execute(w, PageVars{Message: ""})
 		if e != nil {
 			glog.Fatal(e)
@@ -33,7 +40,6 @@ func ServeProjectForm(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.Method == http.MethodPost {
-		glog.Info("ServeProjectForm, save project")
 
 		p := entity.Project{
 			Name:        r.FormValue("name"),
@@ -56,7 +62,9 @@ func ServeProjectForm(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		wg.Add(1)
 		go func() {
+			defer wg.Done()
 			// create QR code
 			qr := new(observe.Qr)
 			urlNewObs := fmt.Sprintf("%s/observation/%s/new", os.Getenv("DOMAIN"), p.Hash)
@@ -74,6 +82,7 @@ func ServeProjectForm(w http.ResponseWriter, r *http.Request) {
 			}
 		}()
 
+		wg.Wait()
 		url := fmt.Sprintf("/project/%s/", p.Hash)
 		http.Redirect(w, r, url, http.StatusSeeOther)
 	}
