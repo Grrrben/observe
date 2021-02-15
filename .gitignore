@@ -1,0 +1,17 @@
+.env
+
+static/images/observation/raw/*
+!static/images/observation/raw/.gitkeep
+static/images/observation/thumb/*
+!static/images/observation/thumb/.gitkeep
+static/images/observation/small/*
+!static/images/observation/small/.gitkeep
+static/images/observation/medium/*
+!*static/images/observation/medium/.gitkeep
+static/images/observation/large/*
+!static/images/observation/large/.gitkeep
+static/images/qr/*
+!static/images/qr/.gitkeep
+
+/log/*
+/.idea

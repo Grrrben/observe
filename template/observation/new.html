@@ -1,0 +1,26 @@
+{{template "base" .}}
+
+{{define "title"}}Nieuwe observatie{{end}}
+
+{{define "body"}}
+    {{if .Saved}}
+        <h1>Opgeslagen</h1>
+        <p>Dank voor je bijdrage</p>
+        <a href="/project/{{.Hash}}/">Project pagina</a>.
+    {{else}}
+        <h1>Observatie maken</h1>
+
+        {{ if  .Message }}
+            <p>{{.Message}}</p>
+        {{ end }}
+
+        <video id="video" width="640" height="480" autoplay></video>
+        <canvas id="canvas" width="640" height="480"></canvas>
+        <button id="snap">Foto nemen</button>
+
+        <form method="POST">
+            <input type="hidden" name="image" id="image">
+            <input type="submit" value="Insturen">
+        </form>
+    {{end}}
+{{end}}

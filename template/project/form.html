@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Project</title>
+    <style>
+        #container {
+            margin: 0 auto;
+            width: 80%;
+        }
+    </style>
+</head>
+<body>
+
+<div id="container">
+    <h1>Project aanmaken</h1>
+
+    {{ if  .Message }}
+        <p>{{.Message}}</p>
+    {{ end }}
+
+    <p>Maak een nieuw project aan</p>
+
+    <form method="POST">
+        <label for="name">Naam:</label><br/>
+        <input type="text" name="name" id="name"><br>
+
+        <label for="description">Omschrijving:</label><br/>
+        <textarea name="description" id="description"></textarea><br>
+
+        <label for="address">Adres:</label><br/>
+        <input type="text" name="address" id="address"><br>
+
+        <input type="submit" value="Aanmaken">
+    </form>
+</div>
+
+</body>
+</html>
