@@ -18,7 +18,7 @@
 ## infra
 
 - ~~docker~~
-- git
+- ~~git~~
 - ~~database setup~~
 - message broker
 - deployment strategy
