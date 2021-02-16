@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 )
 
 const thumb = "thumb"
@@ -23,7 +24,7 @@ type ImageHandler struct {
 func (h *ImageHandler) SavePng(newFileName string, m *image.Image) error {
 	f, err := os.Create(newFileName)
 	if err != nil {
-		return fmt.Errorf("could not create file %s", newFileName)
+		return fmt.Errorf("could not create file %s; %s", newFileName, err)
 	}
 
 	encoder := png.Encoder{CompressionLevel: png.BestCompression}
@@ -52,29 +53,40 @@ func (h *ImageHandler) Base64ToImage(base64image string) (*image.Image, error) {
 	return &m, nil
 }
 
-func (h *ImageHandler) ScaleAllSizes(org string) error {
-
-	r, err := os.Open(org)
+func (h *ImageHandler) GetImgFromPath(path string) (image.Image, error) {
+	r, err := os.Open(path)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	defer r.Close()
 
 	img, _, err := image.Decode(r)
+
+	return img, err
+}
+
+// Scales an Image file to all sizes and saves it as a PNG.
+// If filename is a path, only the basename of the file is used.
+func (h *ImageHandler) ScaleImageAllSizes(img image.Image, filename string) error {
+	var wg sync.WaitGroup
 	sizes := []string{thumb, small, medium, large}
+
+	wg.Add(len(sizes))
 	for _, size := range sizes {
 		m, err := h.Scale(img, size)
 		if err != nil {
 			return err
 		}
 		p, _ := h.GetPath(size)
-		b := filepath.Base(org)
+		b := filepath.Base(filename)
 		f := fmt.Sprintf("%s/%s", p, b)
 		err = h.SavePng(f, &m)
 		if err != nil {
 			return err
 		}
+		wg.Done()
 	}
+	wg.Wait()
 
 	return nil
 }

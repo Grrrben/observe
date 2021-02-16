@@ -10,13 +10,10 @@ import (
 	"html/template"
 	"net/http"
 	"path/filepath"
-	"sync"
 	"time"
 )
 
 func ServeObservationForm(w http.ResponseWriter, r *http.Request) {
-	var wg sync.WaitGroup
-
 	v := mux.Vars(r)
 	hash := v["hash"]
 
@@ -69,8 +66,9 @@ func ServeObservationForm(w http.ResponseWriter, r *http.Request) {
 		}
 
 		p, _ := imageHandler.GetPath(observe.Raw)
-		rimg := fmt.Sprintf("%s/%s_%d.png", p, hash, time.Now().Unix())
-		err = imageHandler.SavePng(rimg, img)
+		filename := fmt.Sprintf("%s_%d.png", hash, time.Now().Unix())
+		rimgPath := fmt.Sprintf("%s/%s", p, filename)
+		err = imageHandler.SavePng(rimgPath, img)
 		if err != nil {
 			glog.Error(err)
 			eh := ErrorHandler{Code: http.StatusInternalServerError, Message: err.Error()}
@@ -80,16 +78,21 @@ func ServeObservationForm(w http.ResponseWriter, r *http.Request) {
 
 		// scale the image to smaller sizes
 		// TODO which can be done in the background
-		wg.Add(1)
 		go func() {
-			defer wg.Done()
-			err := imageHandler.ScaleAllSizes(rimg)
+			image, err := imageHandler.GetImgFromPath(rimgPath)
 			if err != nil {
 				glog.Error(err)
+				return
+			}
+
+			err = imageHandler.ScaleImageAllSizes(image, filename)
+			if err != nil {
+				glog.Error(err)
+				return
 			}
 		}()
 
-		o.Image = filepath.Base(rimg)
+		o.Image = filepath.Base(rimgPath)
 		or := repo.NewObservationRepo()
 		_, err = or.Save(o)
 		if err != nil {
@@ -100,7 +103,6 @@ func ServeObservationForm(w http.ResponseWriter, r *http.Request) {
 		}
 
 		vars.Saved = true
-		wg.Wait()
 		tmpl.Execute(w, vars)
 	}
 }

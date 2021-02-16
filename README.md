@@ -1,6 +1,6 @@
 # Observe
 
-Citizen Science project dag foto's van 1 object of landschap door de tijd vastlegt.
+Citizen Science project that continuously documents pictures of a given subject.
 
 ## Stack
 
