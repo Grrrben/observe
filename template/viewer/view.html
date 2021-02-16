@@ -4,10 +4,35 @@
     <h1>{{.Project.Name}}</h1>
     <p>Viewer</p>
 
-    {{range .Observations}}
-        <div>
-            <p>{{.CreatedFormattedDate}}</p>
-            <img src="/static/images/observation/small/{{.Image}}" />
-        </div>
-    {{ end }}
+    {{$interval := .Interval}}
+    {{$months := .Months}}
+    {{/* map[int]map[int][]entity.Observation */}}
+    <div>
+        {{range $year, $periods := .Observations}}
+            {{/* map[int][]entity.Observation */}}
+            <div class="clearfix"><h2>{{ $year }}</h2></div>
+
+            {{range $period, $obs := $periods}}
+                <div class="period_declaration clearfix">
+                    <h3>
+                        {{if eq $interval "month"}}
+                            {{ index $months $period }}
+                        {{ else}}
+                            Week {{$period}}
+                        {{ end }}
+                    </h3>
+                </div>
+                {{/* []entity.Observation */}}
+                <div class="month">
+                    {{ range .}}
+                        <div class="ob">
+                            <p class="ob_date">{{.CreatedFormattedDate}}</p>
+                            <img src="/static/images/observation/thumb/{{.Image}}"/>
+                        </div>
+                    {{end}}
+                </div>
+
+            {{ end}}
+        {{ end }}
+    </div>
 {{end}}

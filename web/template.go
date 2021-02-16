@@ -2,9 +2,7 @@ package web
 
 import (
 	"fmt"
-	"log"
 	"os"
-	"path/filepath"
 )
 
 type templateHelper struct {
@@ -15,16 +13,8 @@ func NewTemplateHelper() *templateHelper {
 	return new(templateHelper)
 }
 
-func (t *templateHelper) Dir() string {
-	d, e := filepath.Abs(filepath.Dir(os.Args[0]))
-	if e != nil {
-		log.Fatal(e)
-	}
-	return d
-}
-
 func (t *templateHelper) FilePath(templateFile string) string {
-	return fmt.Sprintf("%s/template/%s", t.Dir(), templateFile)
+	return fmt.Sprintf("%s/%s", os.Getenv("DIR_TEMPLATE"), templateFile)
 }
 
 func (t *templateHelper) GetExtendedTemplateFiles(ts string) []string {

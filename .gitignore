@@ -1,4 +1,5 @@
 .env
+.env.test
 
 static/images/observation/raw/*
 !static/images/observation/raw/.gitkeep
@@ -15,3 +16,4 @@ static/images/qr/*
 
 /log/*
 /.idea
+/testdata

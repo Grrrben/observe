@@ -94,15 +94,15 @@ func (h *ImageHandler) ScaleImageAllSizes(img image.Image, filename string) erro
 func (h *ImageHandler) GetPath(size string) (string, error) {
 	switch size {
 	case Raw:
-		return "./static/images/observation/raw", nil
+		return fmt.Sprintf("%s/images/observation/raw", os.Getenv("DIR_STATIC")), nil
 	case thumb:
-		return "./static/images/observation/thumb", nil
+		return fmt.Sprintf("%s/images/observation/thumb", os.Getenv("DIR_STATIC")), nil
 	case small:
-		return "./static/images/observation/small", nil
+		return fmt.Sprintf("%s/images/observation/small", os.Getenv("DIR_STATIC")), nil
 	case medium:
-		return "./static/images/observation/medium", nil
+		return fmt.Sprintf("%s/images/observation/medium", os.Getenv("DIR_STATIC")), nil
 	case large:
-		return "./static/images/observation/large", nil
+		return fmt.Sprintf("%s/images/observation/large", os.Getenv("DIR_STATIC")), nil
 	default:
 		return "", fmt.Errorf("unable to create path for unknown size %s", size)
 	}

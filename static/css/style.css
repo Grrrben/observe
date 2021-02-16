@@ -1,3 +1,7 @@
+/**
+ * Form new observation
+ */
+
 #container {
     margin: 0px auto;
     width: 80%;
@@ -9,4 +13,29 @@
 
 button {
     display: block;
+}
+
+/**
+ * Viewer
+ */
+
+div.ob {
+    margin: 2px;
+    float: left;
+}
+
+.period_declaration {
+    margin: 0 0 1em 0;
+}
+
+.month {
+    width: 4100px;
+}
+
+p.ob_date {
+    font-size: smaller;
+}
+
+.clearfix {
+    clear: both;
 }

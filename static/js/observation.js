@@ -29,8 +29,6 @@ button.addEventListener("click", function () {
     } else {
         video.style.display = "block";
         canvas.style.display = "none";
-        context.drawImage(video, 0, 0, 640, 480);
-
         this.innerText = "Foto nemen";
     }
     // reminder for switching from video to snap and vice versa
