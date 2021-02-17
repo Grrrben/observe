@@ -34,6 +34,7 @@ func (rep *ObservationRepository) FindByHash(hash string) ([]entity.Observation,
 	defer c.Close()
 
 	rows, err := c.Query(q, hash)
+	defer rows.Close()
 
 	for rows.Next() {
 		var o entity.Observation

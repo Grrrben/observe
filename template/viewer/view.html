@@ -2,23 +2,32 @@
 {{define "title"}}{{.Project.Name}}{{end}}
 {{define "body"}}
     <h1>{{.Project.Name}}</h1>
-    <p>Viewer</p>
+    <p>Viewer is available for week or month</p>
+        <ul>
+            <li>
+                <a href="/project/{{.Project.Hash}}/viewer/week">week</a>
+            </li>
+            <li>
+                <a href="/project/{{.Project.Hash}}/viewer/month">month</a>
+            </li>
+        </ul>
 
-    {{$interval := .Interval}}
+    {{$tf := .TimeFrame}}
     {{$months := .Months}}
-    {{/* map[int]map[int][]entity.Observation */}}
     <div>
-        {{range $year, $periods := .Observations}}
+        {{/* map[int]map[int][]entity.Observation */}}
+        {{range $year, $tfs := .Observations}}
             {{/* map[int][]entity.Observation */}}
             <div class="clearfix"><h2>{{ $year }}</h2></div>
 
-            {{range $period, $obs := $periods}}
+            {{range $t, $obs := $tfs}}
                 <div class="period_declaration clearfix">
                     <h3>
-                        {{if eq $interval "month"}}
-                            {{ index $months $period }}
+                        {{if eq $tf "month"}}
+                            {{/* get el with index $tf from $months */}}
+                            {{ index $months $t }}
                         {{ else}}
-                            Week {{$period}}
+                            Week {{$t}}
                         {{ end }}
                     </h3>
                 </div>

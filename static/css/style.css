@@ -3,7 +3,7 @@
  */
 
 #container {
-    margin: 0px auto;
+    margin: 0 auto;
     width: 80%;
 }
 
@@ -24,18 +24,21 @@ div.ob {
     float: left;
 }
 
-.period_declaration {
-    margin: 0 0 1em 0;
+.period_declaration h3 {
+    margin: 1em 0 0 0;
 }
 
 .month {
     width: 4100px;
+    clear: both;
 }
 
 p.ob_date {
     font-size: smaller;
+    margin: 0;
 }
 
 .clearfix {
+    float: left;
     clear: both;
 }

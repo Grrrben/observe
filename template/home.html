@@ -1,0 +1,14 @@
+{{template "base" .}}
+{{define "title"}}Observe{{end}}
+{{define "body"}}
+    <h1>Observe</h1>
+    <p>A Citizen Science project that continuously documents pictures, keeping track of changes in time.</p>
+        <p>Current projects:</p>
+    <ul>
+        {{range .Projects}}
+            <li>
+                <a href="/project/{{.Hash}}/">{{.Name}}</a>
+            </li>
+        {{end}}
+    </ul>
+{{end}}

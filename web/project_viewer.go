@@ -9,16 +9,23 @@ import (
 	"net/http"
 )
 
+const month = "month"
+
 func ServeProjectViewer(w http.ResponseWriter, r *http.Request) {
+	var timeFrame string
 
 	v := mux.Vars(r)
 	hash := v["hash"]
+	timeFrame, ok := v["timeframe"]
+	if !ok {
+		timeFrame = month
+	}
 
 	type PageVars struct {
 		Project entity.Project
 		// [year][month|week][observations]
 		Observations map[int]map[int][]entity.Observation
-		Interval     string
+		TimeFrame    string
 		Months       map[int]string
 	}
 
@@ -44,22 +51,29 @@ func ServeProjectViewer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	mo := mapObservations(obs)
+	mo := mapObservations(obs, timeFrame)
 	vars := PageVars{
 		Project:      p,
-		Interval:     "month",
+		TimeFrame:    timeFrame,
 		Observations: mo,
 		Months:       getTranslatedMonths(),
 	}
 	tmpl.Execute(w, vars)
 }
 
-func mapObservations(observations []entity.Observation) map[int]map[int][]entity.Observation {
+func mapObservations(observations []entity.Observation, timeFrame string) map[int]map[int][]entity.Observation {
 	var mapped = make(map[int]map[int][]entity.Observation, len(observations))
+	var tf, y int
 
 	for _, ob := range observations {
-		y := ob.DateCreated.Year()
-		m := ob.DateCreated.Month()
+
+		if timeFrame == month {
+			tf = int(ob.DateCreated.Month())
+			y = ob.DateCreated.Year()
+		} else {
+			// ISOWeek also fetches the year
+			y, tf = ob.DateCreated.ISOWeek()
+		}
 
 		inner, ok := mapped[y]
 		if !ok {
@@ -67,7 +81,7 @@ func mapObservations(observations []entity.Observation) map[int]map[int][]entity
 			mapped[y] = inner
 		}
 
-		mapped[y][int(m)] = append(mapped[y][int(m)], ob)
+		mapped[y][tf] = append(mapped[y][tf], ob)
 	}
 	return mapped
 }

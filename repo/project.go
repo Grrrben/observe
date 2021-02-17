@@ -20,24 +20,41 @@ func (pr *ProjectRepository) Get(id int64) (entity.Project, error) {
 }
 
 func (pr *ProjectRepository) GetByHash(hash string) (entity.Project, error) {
+	var p entity.Project
 
 	q := `SELECT id, hash, project_name as name, description, address FROM project WHERE hash = $1 LIMIT 1;`
 	c := pr.getConnection()
 	defer c.Close()
 
-	rows, err := c.Query(q, hash)
+	err := c.QueryRow(q, hash).Scan(&p.Id, &p.Hash, &p.Name, &p.Description, &p.Address)
+	if err != nil {
+		return p, err
+	}
+
+	return p, nil
+}
+
+func (pr *ProjectRepository) All() ([]entity.Project, error) {
+
+	q := `SELECT id, hash, project_name as name, description, address FROM project;`
+	c := pr.getConnection()
+	defer c.Close()
+
+	rows, err := c.Query(q)
+	defer rows.Close()
+
+	var ps []entity.Project
 
 	for rows.Next() {
 		var p entity.Project
 		err = rows.Scan(&p.Id, &p.Hash, &p.Name, &p.Description, &p.Address)
 		if err != nil {
-			return entity.Project{}, err
+			return nil, err
 		}
-
-		return p, nil
+		ps = append(ps, p)
 	}
 
-	return entity.Project{}, err
+	return ps, err
 }
 
 func (pr *ProjectRepository) GetBy(sql string, args ...interface{}) ([]entity.Project, error) {
