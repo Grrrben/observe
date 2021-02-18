@@ -2,26 +2,32 @@ version: "3.5"
 
 services:
   web:
-    container_name: dockerdev
-    build: ./
+    container_name: observe-go
+    build:
+      # need to add files from root, hence the context .
+      context: .
+      dockerfile: ./docker/go/Dockerfile
     ports:
       - "8080:8080"
     environment:
       DD_DB_HOST: db
     command: ./goapp -logtostderr=true
+    # makes sure that the uploaded data is owned by the current user instead of root:root om the host
+    # ideally this would be created by something like $(id -u):$(id -g)
+    user: "1000:1000"
     depends_on:
       - db
     volumes:
       - ./template:/app/template
       - ./static:/app/static
   db:
-    container_name: dockerdev-db
-    image: postgres:13-alpine
+    container_name: observe-db
+    build:
+      context: ./docker/db
+      dockerfile: Dockerfile
     ports:
       - "5432:5432"
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
-    volumes:
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
