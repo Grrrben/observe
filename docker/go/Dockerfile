@@ -1,5 +1,5 @@
 # Compile stage
-FROM golang:1.15.7 AS compile_env
+FROM golang:1.16 AS compile_env
 
 ADD . /gosource
 WORKDIR /gosource/cmd
