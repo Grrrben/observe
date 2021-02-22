@@ -1,7 +1,7 @@
 select-observations:
-	docker-compose exec db psql -U postgres observe -c "SELECT * FROM observation;"
+	docker-compose exec db psql -U postgres observe -c "SELECT * FROM observation ORDER BY id DESC LIMIT 10;"
 select-projects:
-	docker-compose exec db psql -U postgres observe -c "SELECT * FROM project;"
+	docker-compose exec db psql -U postgres observe -c "SELECT * FROM project ORDER BY id DESC LIMIT 10;"
 
 remove-images:
 	sudo rm ./static/images/observation/thumb/*.png

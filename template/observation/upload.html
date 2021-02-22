@@ -1,0 +1,27 @@
+{{template "base" .}}
+
+{{define "title"}}Upload observatie{{end}}
+
+{{define "body"}}
+    {{if .Saved}}
+        <h1>Saved</h1>
+        <p>Thank you for your upload. See the image in the <a href="/project/{{.Hash}}/">project page</a> or upload another image.</p>.
+    {{else}}
+        <h1>Upload an observation</h1>
+
+        {{ if  .Message }}
+            <p>{{.Message}}</p>
+        {{ end }}
+
+    {{end}}
+
+    <form method="POST" enctype="multipart/form-data">
+        <input type="file" name="image" id="image" required><br>
+        <input type="text" name="datetime" id="datetime"
+               placeholder="30-01-2021 09:21"
+               pattern="[0-9]{2}\-[0-9]{2}\-[0-9]{4}\s[0-9]{2}\:[0-9]{2}"
+               required>
+        <br>
+        <input type="submit" value="Upload">
+    </form>
+{{end}}

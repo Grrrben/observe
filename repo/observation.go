@@ -26,7 +26,6 @@ func (rep *ObservationRepository) GetBy(sql string, args ...interface{}) ([]enti
 }
 
 func (rep *ObservationRepository) FindByHash(hash string) ([]entity.Observation, error) {
-
 	var obs []entity.Observation
 
 	q := `SELECT id, project_hash as ProjectHash, image, date_created as created FROM observation WHERE project_hash = $1;`
@@ -34,6 +33,9 @@ func (rep *ObservationRepository) FindByHash(hash string) ([]entity.Observation,
 	defer c.Close()
 
 	rows, err := c.Query(q, hash)
+	if err != nil {
+		return nil, err
+	}
 	defer rows.Close()
 
 	for rows.Next() {
@@ -61,8 +63,8 @@ func (rep *ObservationRepository) Save(e entity.Entity) (entity.Observation, err
 			return o, err
 		}
 
-		lii, _ := res.LastInsertId()
-		o.SetId(lii)
+		id, _ := res.LastInsertId()
+		o.SetId(id)
 
 		return o, nil
 	}

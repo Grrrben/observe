@@ -1,10 +1,14 @@
 package observe
 
 import (
+	"bytes"
 	"encoding/base64"
 	"fmt"
 	"image"
+	"image/gif"
+	"image/jpeg"
 	"image/png"
+	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
@@ -51,6 +55,68 @@ func (h *ImageHandler) Base64ToImage(base64image string) (*image.Image, error) {
 	}
 
 	return &m, nil
+}
+
+// BytesToPng converts image []byte to png
+// Made for working with file data from POST fields
+func (h *ImageHandler) BytesToPng(imageBytes []byte) (*image.Image, error) {
+	contentType := http.DetectContentType(imageBytes)
+
+	switch contentType {
+	case "image/gif":
+		img, err := gif.Decode(bytes.NewReader(imageBytes))
+		if err != nil {
+			return nil, fmt.Errorf("unable to decode gif: %s", err)
+		}
+
+		buf := new(bytes.Buffer)
+		if err := png.Encode(buf, img); err != nil {
+			return nil, fmt.Errorf("unable to encode gif: %s", err)
+		}
+
+		m, _, err := image.Decode(buf)
+		if err != nil {
+			return nil, fmt.Errorf("Error decoding image string: %s ", err)
+		}
+
+		return &m, nil
+	case "image/png":
+		img, err := png.Decode(bytes.NewReader(imageBytes))
+		if err != nil {
+			return nil, fmt.Errorf("unable to decode png: %s", err)
+		}
+
+		buf := new(bytes.Buffer)
+		if err := png.Encode(buf, img); err != nil {
+			return nil, fmt.Errorf("unable to encode png: %s", err)
+		}
+
+		m, _, err := image.Decode(buf)
+		if err != nil {
+			return nil, fmt.Errorf("Error decoding image string: %s ", err)
+		}
+
+		return &m, nil
+	case "image/jpeg":
+		img, err := jpeg.Decode(bytes.NewReader(imageBytes))
+		if err != nil {
+			return nil, fmt.Errorf("unable to decode jpeg: %s", err)
+		}
+
+		buf := new(bytes.Buffer)
+		if err := png.Encode(buf, img); err != nil {
+			return nil, fmt.Errorf("unable to encode png: %s", err)
+		}
+
+		m, _, err := image.Decode(buf)
+		if err != nil {
+			return nil, fmt.Errorf("Error decoding image string: %s ", err)
+		}
+
+		return &m, nil
+	}
+
+	return nil, fmt.Errorf("unable to convert %#v to png", contentType)
 }
 
 func (h *ImageHandler) GetImgFromPath(path string) (image.Image, error) {

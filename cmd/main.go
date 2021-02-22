@@ -22,6 +22,7 @@ func main() {
 
 	r := mux.NewRouter()
 	r.HandleFunc("/observation/{hash}/new", loggerMiddleWare(web.ServeObservationForm)).Methods(http.MethodPost, http.MethodGet)
+	r.HandleFunc("/observation/{hash}/upload", loggerMiddleWare(web.ServeObservationUploadForm)).Methods(http.MethodPost, http.MethodGet)
 	r.HandleFunc("/project/new", loggerMiddleWare(web.ServeProjectForm)).Methods(http.MethodPost, http.MethodGet)
 	r.HandleFunc("/project/{hash}/viewer", loggerMiddleWare(web.ServeProjectViewer)).Methods(http.MethodGet)
 	r.HandleFunc("/project/{hash}/viewer/{timeframe}", loggerMiddleWare(web.ServeProjectViewer)).Methods(http.MethodGet)
