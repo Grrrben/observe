@@ -4,7 +4,7 @@ Citizen Science project that continuously documents pictures of a given subject.
 
 ## Stack
 
-go1.15.7  
+go1.16  
 postgres 13.1   
 html5
 
