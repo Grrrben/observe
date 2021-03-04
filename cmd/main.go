@@ -28,6 +28,12 @@ func main() {
 	r.HandleFunc("/project/{hash}/viewer/{timeframe}", loggerMiddleWare(web.ServeProjectViewer)).Methods(http.MethodGet)
 	r.HandleFunc("/project/{hash}/", loggerMiddleWare(web.ServeProject)).Methods(http.MethodGet)
 	r.HandleFunc("/", loggerMiddleWare(web.ServeHomepage)).Methods(http.MethodGet)
+	r.HandleFunc("/health", loggerMiddleWare(func(w http.ResponseWriter, r *http.Request) {
+		println("health ok")
+	})).Methods(http.MethodGet)
+	r.HandleFunc("/readiness", loggerMiddleWare(func(w http.ResponseWriter, r *http.Request) {
+		println("readiness ok")
+	})).Methods(http.MethodGet)
 
 	nf := web.ErrorHandler{Code: http.StatusNotFound, Message: "Unknown route"}
 	r.NotFoundHandler = &nf

@@ -43,6 +43,10 @@ func (pr *ProjectRepository) All() ([]entity.Project, error) {
 	rows, err := c.Query(q)
 	defer rows.Close()
 
+	if err != nil {
+		return nil, err
+	}
+
 	var ps []entity.Project
 
 	for rows.Next() {

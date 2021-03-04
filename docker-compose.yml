@@ -4,7 +4,7 @@ services:
   web:
     container_name: observe-go
     build:
-      # need to add files from root, hence the context .
+      # need to add files from project root, hence the context .
       context: .
       dockerfile: ./docker/go/Dockerfile
     ports:
