@@ -17,3 +17,5 @@ static/images/qr/*
 /log/*
 /.idea
 /testdata
+
+/k8s/secrets.yml

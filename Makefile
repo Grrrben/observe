@@ -11,3 +11,5 @@ remove-images:
 	sudo rm ./static/images/observation/raw/*.png
 	@echo ----------------------------
 	@echo Don\'t forget to flush the db
+
+-include ./k8s/Makefile

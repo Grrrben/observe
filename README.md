@@ -6,9 +6,10 @@ Citizen Science project that continuously documents pictures of a given subject.
 
 go1.16  
 postgres 13.1   
-html5
+html5  
 
-docker && docker-compose
+docker && docker-compose  
+kubernetes
 
 ## useful cmd's
 
