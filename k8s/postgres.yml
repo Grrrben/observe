@@ -1,0 +1,42 @@
+# statefulset with a single pod
+# image pulled from grrrben/postgres-observe
+# has a 2Gb storage
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres-database
+spec:
+  selector:
+    matchLabels:
+      app: postgres-database
+  serviceName: postgres-service
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: postgres-database
+    spec:
+      containers:
+        - name: postgres-database
+          image: grrrben/postgres-observe:0.0.2
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: postgres-disk
+              mountPath: /var/lib/postgresql/data
+          env:
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              value: mysecretpassword
+            - name: POSTGRES_DB
+              value: observe
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+  volumeClaimTemplates:
+    - metadata:
+        name: postgres-disk
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 2Gi

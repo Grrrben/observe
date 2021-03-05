@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment # Type of Kubernetes resource
+metadata:
+  name: go-observe # Name of the Kubernetes resource
+spec:
+  replicas: 1 # Number of pods to run at any given time; 1 is nice for debugging
+  selector:
+    matchLabels:
+      app: go-observe  # This deployment applies to any Pods matching the specified label
+  template: # This deployment will create a set of pods using the configurations in this template
+    metadata:
+      labels: # The labels that will be applied to all of the pods in this deployment
+        app: go-observe
+    spec: # Spec for the container which will run in the Pod
+      containers:
+        - name: go-observe
+          image: grrrben/go-observe:0.0.4
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080  # Should match the port number that the Go application listens on
+          env:
+            # Define the environment variable
+            - name: DB_USER # Notice that the case is different here from the key name in the ConfigMap/Secrets.
+              valueFrom:
+                secretKeyRef:
+                  name: secrets # The Secret this value comes from.
+                  key: db_user # The key to fetch.
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: db_password
+            - name: DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap  # The ConfigMap this value comes from.
+                  key: db_name # The key to fetch.
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap
+                  key: db_host
+            - name: DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap
+                  key: db_port
+          livenessProbe: # To check the health of the Pod
+            httpGet:
+              path: /health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 15
+            timeoutSeconds: 5
+          readinessProbe: # To check if the Pod is ready to serve traffic or not
+            httpGet:
+              path: /readiness
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 5
+            timeoutSeconds: 1
+          volumeMounts:
+            - name: template
+              mountPath: /app/template
+            - name: static
+              mountPath: /app/static
+      volumes:
+        - name: template
+          hostPath:
+            path: /mnt/src/template
+        - name: static # static contains the js, css and images
+          hostPath:
+            path: /mnt/src/static
