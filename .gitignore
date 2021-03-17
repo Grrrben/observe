@@ -19,3 +19,7 @@ static/images/qr/*
 /testdata
 
 /k8s/secrets.yml
+
+# dir for tls certificates
+cert/*
+!cert/.gitkeep

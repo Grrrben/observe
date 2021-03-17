@@ -211,7 +211,7 @@ Relevant doc's:
 - [Services, Load Balancing, and Networking](https://kubernetes.io/docs/concepts/services-networking/)
 - [Connecting Applications with Services](https://kubernetes.io/docs/concepts/services-networking/connect-applications-service/)
 
-## .env, configmaps and secrets
+## env, configmaps and secrets
 
 ### Configmaps
 
@@ -231,9 +231,9 @@ There is no secrecy at all with config maps. If that is needed, k8s gives you Se
 
 > ConfigMap does not provide secrecy or encryption. If the data you want to store are confidential, use a Secret rather than a ConfigMap
 
-### .env
+### env
 
-Getting the configmaps values in the .env from a pod is done with a configMapKeyRef:
+Getting the configmaps values in the `env` from a pod is done with a configMapKeyRef:
 
 ```
   env:
@@ -319,7 +319,7 @@ todo
 
 Relevant docs:  
 - [Secrets](https://kubernetes.io/docs/concepts/configuration/secret/)
-- [Creating Secrets configfiels](https://kubernetes.io/docs/tasks/configmap-secret/managing-secret-using-config-file/)
+- [Creating Secrets configfiles](https://kubernetes.io/docs/tasks/configmap-secret/managing-secret-using-config-file/)
 
 
 ## localhost
@@ -333,7 +333,7 @@ For Minikube, Ingress is an add on.
 minikube addons enable ingress
 ```
 
-And while you're at the terminal, tak a note of the minikube ip and add it to `/etc/hosts`. 
+And while you're at the terminal, take a note of the Minikube ip and add it to `/etc/hosts`. 
 ```
 minikube ip
 ```
@@ -347,7 +347,22 @@ kubectl apply -f ingress.yml
 
 The k8s docs have a chapter especially on Ingres with minikube, 
 [set up Ingress on Minikube](https://kubernetes.io/docs/tasks/access-application-cluster/ingress-minikube/).
-If you use nginx, find the docs on including it in your cluster here; [nginx based ingress docs](https://kubernetes.github.io/ingress-nginx/deploy/#minikube)
+If you use nginx, find the docs on including it in your cluster here; [nginx based ingress docs](https://kubernetes.github.io/ingress-nginx/deploy/#minikube).
+
+### TLS
+
+Generate a self-signed certificate and private key with:
+```
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout ./cert/${KEY_FILE} -out ./cert/${CERT_FILE} -subj "/CN=${HOST}/O=${HOST}"
+```
+
+Then create the secret in the cluster via:
+```
+kubectl create secret tls ${CERT_NAME} --key ./cert/${KEY_FILE} --cert ./cert/${CERT_FILE}
+```
+
+[Kubernetes docs](https://kubernetes.io/docs/concepts/services-networking/ingress/#tls)
+[nginx specific docs](https://kubernetes.github.io/ingress-nginx/user-guide/tls/)
 
 ## Releases
 
