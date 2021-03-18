@@ -4,6 +4,8 @@ import "errors"
 
 type Project struct {
 	Id                         int64
+	UserId                     int64
+	User                       User
 	Hash                       string
 	Name, Description, Address string
 	//Lat, Lng float32

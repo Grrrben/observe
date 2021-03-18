@@ -1,6 +1,7 @@
 CREATE TABLE IF NOT EXISTS project(
     id SERIAL PRIMARY KEY,
     hash VARCHAR(80) UNIQUE,
+    user_id INTEGER REFERENCES user(id),
     project_name VARCHAR(255),
     description VARCHAR(255),
     address VARCHAR(255),
@@ -14,7 +15,24 @@ CREATE TABLE IF NOT EXISTS observation (
     date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-INSERT INTO project (hash, project_name, description, address) VALUES ('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'test_name', 'test_description', 'test_address');
+CREATE TABLE IF NOT EXISTS user (
+    id SERIAL PRIMARY KEY,
+    role INTEGER,
+    username VARCHAR(100),
+    email VARCHAR(100),
+    password VARCHAR(255),
+    date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+INSERT INTO user
+(username, email, password)
+VALUES
+('grrrben', 'grrrben@fastmail.com','this_should_be_changed');
+
+INSERT INTO project
+(hash, user_id, project_name, description, address)
+VALUES
+('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 1, 'test_name', 'test_description', 'test_address');
 
 INSERT into observation (project_hash, image, date_created) VALUES('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa_1577872800.png', '2020-01-01 10:00:00.00000');
 INSERT into observation (project_hash, image, date_created) VALUES('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa_1577959200.png', '2020-01-02 10:00:00.00000');

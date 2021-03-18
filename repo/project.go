@@ -22,10 +22,16 @@ func (pr *ProjectRepository) Get(id int64) (entity.Project, error) {
 func (pr *ProjectRepository) GetByHash(hash string) (entity.Project, error) {
 	var p entity.Project
 
-	q := `SELECT id, hash, project_name as name, description, address FROM project WHERE hash = $1 LIMIT 1;`
+	q := `SELECT 
+        p.id, p.hash, 
+        u.id, u.role, u.username, u.email, u.password, 
+        p.project_name as name, p.description, p.address 
+		FROM project p 
+	    INNER JOIN "user" u ON p.user_id = u.id 
+	    WHERE hash = $1 LIMIT 1;`
 	c := pr.getConnection()
 
-	err := c.QueryRow(q, hash).Scan(&p.Id, &p.Hash, &p.Name, &p.Description, &p.Address)
+	err := c.QueryRow(q, hash).Scan(&p.Id, &p.Hash, &p.User.Id, &p.User.Role, &p.User.Username, &p.User.Email, &p.User.Password, &p.Name, &p.Description, &p.Address)
 	if err != nil {
 		return p, err
 	}
@@ -36,7 +42,12 @@ func (pr *ProjectRepository) GetByHash(hash string) (entity.Project, error) {
 
 func (pr *ProjectRepository) All() ([]entity.Project, error) {
 
-	q := `SELECT id, hash, project_name as name, description, address FROM project;`
+	q := `SELECT 
+        p.id, p.hash, 
+        u.id, u.role, u.username, u.email, u.password, 
+        p.project_name as name, p.description, p.address 
+		FROM project p 
+		INNER JOIN "user" u ON p.user_id = u.id;`
 	c := pr.getConnection()
 	defer c.Close()
 
@@ -50,7 +61,7 @@ func (pr *ProjectRepository) All() ([]entity.Project, error) {
 
 	for rows.Next() {
 		var p entity.Project
-		err = rows.Scan(&p.Id, &p.Hash, &p.Name, &p.Description, &p.Address)
+		err = rows.Scan(&p.Id, &p.Hash, &p.User.Id, &p.User.Role, &p.User.Username, &p.User.Email, &p.User.Password, &p.Name, &p.Description, &p.Address)
 		if err != nil {
 			return nil, err
 		}
@@ -69,17 +80,17 @@ func (pr *ProjectRepository) GetBy(sql string, args ...interface{}) ([]entity.Pr
 func (pr *ProjectRepository) Save(e entity.Entity) (entity.Project, error) {
 
 	if p, ok := e.(entity.Project); ok {
-		q := `INSERT INTO project (hash, project_name, description, address) VALUES ($1, $2, $3, $4);`
+		q := `INSERT INTO project (hash, user_id, project_name, description, address) VALUES ($1, $2, $3, $4, $5);`
 		c := pr.getConnection()
 
-		res, err := c.Exec(q, p.Hash, p.Name, p.Description, p.Address)
+		res, err := c.Exec(q, p.Hash, p.User.Id, p.Name, p.Description, p.Address)
 		if err != nil {
 			return p, err
 		}
 		defer c.Close()
 
-		lii, _ := res.LastInsertId()
-		p.SetId(lii)
+		liId, _ := res.LastInsertId()
+		p.SetId(liId)
 
 		return p, nil
 	}
