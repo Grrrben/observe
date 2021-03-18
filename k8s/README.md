@@ -405,7 +405,7 @@ kubectl apply -f k8s-web.yml
 
 ### Official
 - [docs](https://kubernetes.io/docs/home/)
+
 ### Basics
 - [Deploying a containerized Go app on Kubernetes](https://www.callicoder.com/deploy-containerized-go-app-kubernetes/)
 - A long but insightful beginners level talk about [Docker and Kubernetes](https://youtu.be/Wf2eSG3owoA?t=10655) [Youtube Alert]
-

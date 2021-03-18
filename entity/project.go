@@ -11,7 +11,7 @@ type Project struct {
 
 func (p Project) GetId() (int64, error) {
 	if p.Id == 0 {
-		return 0, errors.New("Id of project not set (not saved?)")
+		return 0, errors.New("id of project not set (not saved?)")
 	}
 	return p.Id, nil
 }

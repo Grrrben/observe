@@ -6,10 +6,9 @@ import (
 )
 
 type Observation struct {
-	Id          int64
-	ProjectHash string
-	Image       string
-	DateCreated time.Time
+	Id                 int64
+	ProjectHash, Image string
+	DateCreated        time.Time
 }
 
 func (o Observation) GetId() (int64, error) {

@@ -10,5 +10,6 @@ kubernetes-apply-all:
 
 kubernetes-pods:
 	kubectl get pods
+
 kubernetes-services:
 	kubectl get services

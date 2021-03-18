@@ -13,7 +13,7 @@ func HashString(s string) string {
 
 	marshaler, ok := h.(encoding.BinaryMarshaler)
 	if !ok {
-		log.Fatal("h does not implement encoding.BinaryMarshaler")
+		log.Fatal("hash does not implement encoding.BinaryMarshaler")
 	}
 	_, err := marshaler.MarshalBinary()
 	if err != nil {
